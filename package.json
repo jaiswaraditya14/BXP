@@ -1,0 +1,14 @@
+{
+    "name": "student-book-exchange-portal",
+    "version": "1.0.0",
+    "description": "Full stack Student Book Exchange Portal",
+    "main": "server.js",
+    "scripts": {
+        "backend": "cd backend && npm start",
+        "frontend": "cd frontend && npm start",
+        "dev": "concurrently \"npm run backend\" \"npm run frontend\""
+    },
+    "dependencies": {
+        "concurrently": "^8.2.2"
+    }
+}
