@@ -6,8 +6,8 @@ pipeline {
     }
 
     environment {
-        MONGODB_URI = credentials('MONGODB_URI')   // Set in Jenkins Credentials
-        JWT_SECRET  = credentials('JWT_SECRET')     // Set in Jenkins Credentials
+        MONGODB_URI = 'mongodb://localhost:27017/bookexchange'
+        JWT_SECRET  = 'your_jwt_secret_key'
         PORT        = '5000'
     }
 
