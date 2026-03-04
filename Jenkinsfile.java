@@ -32,7 +32,7 @@ pipeline {
                 echo '📊 Publishing Test Results...'
                 // Requires 'TestNG Results' plugin
                 // Fixed casing to match Jenkins symbol
-                testNG(results: '**/testng-results.xml')
+                testNG(reportFilenamePattern: '**/testng-results.xml')
                 
                 // Requires 'HTML Publisher' plugin
                 publishHTML([
