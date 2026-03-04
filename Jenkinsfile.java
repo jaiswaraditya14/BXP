@@ -31,7 +31,8 @@ pipeline {
             dir('java-selenium-project') {
                 echo '📊 Publishing Test Results...'
                 // Requires 'TestNG Results' plugin
-                testng(results: '**/testng-results.xml')
+                // Fixed casing to match Jenkins symbol
+                testNG(results: '**/testng-results.xml')
                 
                 // Requires 'HTML Publisher' plugin
                 publishHTML([
