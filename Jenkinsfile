@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'Nodejs-25'  // Must match the name you set in Jenkins → Tools → NodeJS
+        nodejs 'Nodejs-20'  // Updated based on your Jenkins configuration
     }
 
     environment {
@@ -16,7 +16,11 @@ pipeline {
         stage('Checkout') {
             steps {
                 echo '📥 Checking out source code...'
-                checkout scm
+                // Option 1: Use this if you configured "Pipeline script from SCM"
+                // checkout scm
+                
+                // Option 2: Use this if you are pasting the script manually (Replace with your repo details)
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
             }
         }
 

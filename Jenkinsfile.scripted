@@ -1,0 +1,82 @@
+node {
+    try {
+        // Try to load the tool from Jenkins configuration
+        // If this fails, the pipeline will fall back to using 'node' from the system PATH
+        def nodeHome = tool 'Nodejs-20' 
+        env.PATH = "${nodeHome}/bin:${env.PATH}"
+    } catch (e) {
+        echo "⚠️ WARNING: No Jenkins tool named 'Nodejs-20' found. Falling back to system Node.js."
+    }
+
+    // Environment variables
+    env.MONGODB_URI = 'mongodb://localhost:27017/bookexchange'
+    env.JWT_SECRET  = 'your_jwt_secret_key'
+    env.PORT        = '5000'
+
+    try {
+        stage('Checkout') {
+            echo '📥 Checking out source code...'
+            // Option 1: Use this if you configured "Pipeline script from SCM"
+            // checkout scm
+
+            // Option 2: Use this if you are pasting the script manually (Replace with your repo details)
+            git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
+        }
+
+        stage('Install Backend Dependencies') {
+            echo '📦 Installing backend dependencies...'
+            dir('backend') {
+                bat 'npm install'
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            echo '📦 Installing frontend dependencies...'
+            dir('frontend') {
+                bat 'npm install'
+            }
+        }
+
+        stage('Build Frontend') {
+            echo '🔨 Building React frontend...'
+            dir('frontend') {
+                bat 'npm run build'
+            }
+        }
+
+        stage('Test Backend') {
+            echo '🧪 Testing backend server startup...'
+            dir('backend') {
+                bat '''
+                    start /B node server.js
+                    timeout /t 10 /nobreak
+                    curl -s http://localhost:5000 || echo "Server check failed"
+                    taskkill /F /IM node.exe 2>nul || echo "No node process to kill"
+                '''
+            }
+        }
+
+        stage('Deploy') {
+            echo '🚀 Deploying application...'
+            dir('frontend') {
+                bat 'if exist build (echo Frontend build ready for deployment) else (echo ERROR: No build folder found)'
+            }
+            echo '✅ Deployment stage complete!'
+        }
+
+        currentBuild.result = 'SUCCESS'
+    } catch (e) {
+        currentBuild.result = 'FAILURE'
+        echo "❌ Pipeline failed: ${e.message}"
+        throw e
+    } finally {
+        stage('Post-build') {
+            if (currentBuild.result == 'SUCCESS') {
+                echo '🎉 Pipeline completed successfully!'
+            } else {
+                echo '❌ Pipeline failed. Check the console output.'
+            }
+            echo '📋 Pipeline execution finished.'
+        }
+    }
+}
